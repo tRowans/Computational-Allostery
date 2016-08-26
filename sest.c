@@ -133,9 +133,8 @@ int spache(node *atoms, int i,int N)
 }
 
 void connections(int **indexs,int N,node *atoms)
-//stores their indices of connected nodes in index
-//no connections to ligand sites recorded
-//assumes ligands at end
+//Loops through all nodes finding which nodes are within the cutoff for connection and stores the results in indexs
+//Does not connect backbone nodes
 {
     int i=0,count,a=0;
     int size,j=0;
@@ -143,25 +142,20 @@ void connections(int **indexs,int N,node *atoms)
     for(a=0;a<N;a++)
     {
         count = 1;
-        //if(ainb("HETATM",atm[a])==0){continue;}//stops connection to ligands
-        //printf("\n%i\t",a);
-        indexs[a] = realloc(indexs[a],N*sizeof(int));
         for(i=0;i<N;i++)
         {
-
-            //if(i==a || ainb("HETATM",atm[a])==0){continue;}//stops connection to self or ligands
-            if(i==a){continue;}
+            if(i==a){continue;}  //Stops connection to self
+			if (a > 2 && fabs(i - a) == 1) { continue; } //Stops connection to neighbouring backbone nodes
+			if (a == 2 && (i - a) == 1) { continue; } //Stops connection to neighbouring backbone node for first node in chain
             dist = SQR(atoms[i].x - atoms[a].x) + SQR(atoms[i].y - atoms[a].y) + SQR(atoms[i].z - atoms[a].z);
             if(sqrt(dist)<M_CUT)
             {
                 indexs[a][count]=i;
-                //printf("%i\t",indexs[a][count]);
                 count++;
             }
         }
         indexs[a][0]=count;
 		indexs[a] = realloc(indexs[a],(count)*sizeof(int));
-        //printf("count= %d\n",count);
     }
 }
 
