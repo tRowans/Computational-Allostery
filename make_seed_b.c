@@ -191,9 +191,9 @@ int get_opt(char flag[], char* argl[], int argc, char args[])
 
 int main(int argc, char *argl[])
 {
-	int N;
+	int N, **indexs;
 	double sdist, G[5];
-	int opt;
+	int opt, k, i;
 	char cmd[80], path[40];
 
 	//Getting number of nodes
@@ -222,7 +222,7 @@ int main(int argc, char *argl[])
 	FILE *fp;  //File pointer to DDG.txt file
 	sprintf(path, "test_seed");
 	mkdir(path, S_IRWXU);  //Making directory for storing pdb and DDG.txt
-	fp = fopen("test_seed/DDG.txt", w);  //Creating DDG.txt file
+	fp = fopen("test_seed/DDG.txt", 'w');  //Creating DDG.txt file
 	fprintf(fp, "#         G0          G11          G12          G2           DDG\n");
 
 	//make dynamic arrays
