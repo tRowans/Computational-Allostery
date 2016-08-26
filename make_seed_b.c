@@ -10,30 +10,6 @@
 #include <ctype.h>
 #include "lib.h"
 
-int spache_seed(node *atoms, int i)
-//check occupation
-{
-	int j = 0, bools = 0, k = 0, l = 0;//0 is empty 1 is filled
-	double dist;
-	for (j = 0; j<i; j++)
-	{
-		//if(x[j]!=x[j]){continue;}
-		dist = SQR(atoms[i].x - atoms[j].x) + SQR(atoms[i].y - atoms[j].y) + SQR(atoms[i].z - atoms[j].z);
-		if (sqrt(dist)<A_CUT)//filled if within sqrt(3) units of another residue
-		{
-			//printf("sep = %5.3g, j = %d\n",dist,j);
-			bools = 1;
-			break;
-		}
-	}
-	//if(bools==1){printf("\nSpace occupied...\tRetrying...");}
-	return bools;
-}
-
-
-
-
-
 void ratmpos_seed(int i, int j, node *atoms, int *seed)
 //Puts atom i at a random position a distance rdist from atom j
 {
@@ -54,42 +30,6 @@ void ratmpos_seed(int i, int j, node *atoms, int *seed)
 
 		u = spache_seed(atoms, i);
 	} while (u == 1);
-}
-
-
-
-
-void connections(int **indexs, int N, node *atoms)
-//stores their indices of connected nodes in index
-//no connections to ligand sites recorded
-//assumes ligands at end
-{
-	int i = 0, count, a = 0;
-	int size, j = 0;
-	double dist;
-	for (a = 0; a<N; a++)
-	{
-		count = 1;
-		//if(ainb("HETATM",atm[a])==0){continue;}//stops connection to ligands
-		//printf("\n%i\t",a);
-		indexs[a] = realloc(indexs[a], N * sizeof(int));
-		for (i = 0; i<N; i++)
-		{
-
-			//if(i==a || ainb("HETATM",atm[a])==0){continue;}//stops connection to self or ligands
-			if (i == a) { continue; }
-			dist = SQR(atoms[i].x - atoms[a].x) + SQR(atoms[i].y - atoms[a].y) + SQR(atoms[i].z - atoms[a].z);
-			if (sqrt(dist)<M_CUT)
-			{
-				indexs[a][count] = i;
-				//printf("%i\t",indexs[a][count]);
-				count++;
-			}
-		}
-		indexs[a][0] = count;
-		indexs[a] = realloc(indexs[a], (count) * sizeof(int));
-		//printf("count= %d\n",count);
-	}
 }
 
 
@@ -194,7 +134,7 @@ int main(int argc, char *argl[])
 	int N, **indexs;
 	double sdist, G[5];
 	int opt, k, i;
-	char cmd[80], path[40];
+	char cmd[80], path[40], pathb[40];
 
 	//Getting number of nodes
 	opt = get_opt("-N", argl, argc, cmd);
@@ -221,8 +161,9 @@ int main(int argc, char *argl[])
 
 	FILE *fp;  //File pointer to DDG.txt file
 	sprintf(path, "test_seed");
+	sprintf(pathb, "%s/DDG.txt", path);
 	mkdir(path, S_IRWXU);  //Making directory for storing pdb and DDG.txt
-	fp = fopen("test_seed/DDG.txt", 'w');  //Creating DDG.txt file
+	fp = fopen(pathb, "w");  //Creating DDG.txt file
 	fprintf(fp, "#         G0          G11          G12          G2           DDG\n");
 
 	//make dynamic arrays
