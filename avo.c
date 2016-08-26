@@ -13,113 +13,77 @@
 
 //depenedencies: all
 
-void make_seed(FILE *runs,char dir[],int N,double sdist,double G[5],node *atoms,int **indexs)
-//generate random structure and save to dir as d.pd,
+void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node *atoms, int **indexs)
+//Generates a model protein formed from N nodes joined by a backbone.
+//Ligands are generated at a distance specified by sdist.
+//Non-ligand nodes are generated with each node connected to the previous one.
+//A .pdb of the structure is saved to dir[]. Runs is a .txt file for storing free energies. 
+//G[5] holds free energies G0, G11, G12, G2 and DDG, *atoms stores position data etc. and **indexs stores connections.
 {
-    printf("\n----------------------\nGenerating seed Structure\n");
+	printf("\n----------------------\nGenerating Seed Structure\n");
 
-    double ac=0.5*sdist/sqrt(3);//stores site co-ords
-    char path[50];
-    int i=0,d=0,cyc=0,count=0;
-    char fname[20]="h2.pdb";
-    int s=time(NULL);
+	double ac = 0.5*sdist / sqrt(3);//stores site co-ords
+	char path[50];
+	int i = 0, d = 0, cyc = 0, count = 0;
+	char fname[20] = "h2.pdb";
+	int s = time(NULL);
 	static int seed;
 	time_t t;
 	seed = -(int)time(&t);
 	printf("Writing ligands\n");
-// Writing initial details
-    //first ligand
-    atoms[i].atnum = N+1;
-    atoms[i].resnum = N;
-	/*cpystr(atoms[i].atm,"HETATM",6);
-    cpystr(atoms[i].res,"LIG",3);
-    cpystr(atoms[i].name,"CA",2);
-    cpystr(atoms[i].chain,"A",1);
-    cpystr(atoms[i].elem,"C",1);*/
-	strncpy(atoms[i].atm,"HETATM",6);
-    strncpy(atoms[i].res,"LIG",3);
-    strncpy(atoms[i].name,"CA",2);
-    strncpy(atoms[i].chain,"A",1);
-    strncpy(atoms[i].elem,"C",1);
-    atoms[i].occ = 1.00;
-    atoms[i].bfac = urand(&seed,15,20);
-    atoms[i].x = -ac;
+	// Writing initial details
+	//first ligand
+	atoms[i].atnum = N + 3;
+	atoms[i].resnum = N + 2;
+	strncpy(atoms[i].atm, "HETATM", 6);
+	strncpy(atoms[i].res, "LIG", 3);
+	strncpy(atoms[i].name, "CA", 2);
+	strncpy(atoms[i].chain, "A", 1);
+	strncpy(atoms[i].elem, "C", 1);
+	atoms[i].occ = 1.00;
+	atoms[i].bfac = urand(&seed, 15, 20);
+	atoms[i].x = -ac;
 	atoms[i].y = -ac;
 	atoms[i].z = -ac;
-    i++;
-    //second ligand
-    atoms[i].atnum = N+2;
-    atoms[i].resnum = N+1;
-	/*cpystr(atoms[i].atm,"HETATM",6);
-    cpystr(atoms[i].res,"LIG",3);
-    cpystr(atoms[i].name,"CA",2);
-    cpystr(atoms[i].chain,"A",1);
-    cpystr(atoms[i].elem,"C",1);*/
-	strncpy(atoms[i].atm,"HETATM",6);
-    strncpy(atoms[i].res,"LIG",3);
-    strncpy(atoms[i].name,"CA",2);
-    strncpy(atoms[i].chain,"A",1);
-    strncpy(atoms[i].elem,"C",1);
-    atoms[i].occ = 1.00;
-    atoms[i].bfac = urand(&seed,15,20);
-    atoms[i].x = ac;
+	i++;
+	//second ligand
+	atoms[i].atnum = N + 4;
+	atoms[i].resnum = N + 3;
+	strncpy(atoms[i].atm, "HETATM", 6);
+	strncpy(atoms[i].res, "LIG", 3);
+	strncpy(atoms[i].name, "CA", 2);
+	strncpy(atoms[i].chain, "A", 1);
+	strncpy(atoms[i].elem, "C", 1);
+	atoms[i].occ = 1.00;
+	atoms[i].bfac = urand(&seed, 15, 20);
+	atoms[i].x = ac;
 	atoms[i].y = ac;
 	atoms[i].z = ac;
 	printf("Ligands written\n");
 	i++;
-    
-    do{
+	//writing atoms
+	for (i = 2; i < N + 2; i++)
+	{
+		atoms[i].atnum = i - 1;
+		atoms[i].resnum = i - 1;
+		strncpy(atoms[i].res, "TOY", 3);
+		strncpy(atoms[i].atm, "ATOM", 4);
+		strncpy(atoms[i].name, "CA", 2);
+		strncpy(atoms[i].chain, "A", 1);
+		strncpy(atoms[i].elem, "C", 1);
+		atoms[i].occ = 1.00;
 		atoms[i].bfac = rbfac(&seed);
-    	atoms[i].atnum = 1;
-    	atoms[i].resnum = 1;
-		strncpy(atoms[i].res,"TOY",3);
-		strncpy(atoms[i].atm,"ATOM",4);
-    	strncpy(atoms[i].name,"CA",2);
-    	strncpy(atoms[i].chain,"A",1);
-    	strncpy(atoms[i].elem,"C",1);
-    	atoms[i].occ = 1.00;
-		ratmpos(i,0,atoms,&seed);
-		i++;
-		atoms[i].bfac = rbfac(&seed);
-    	atoms[i].atnum = 2;
-    	atoms[i].resnum = 2;
-		strncpy(atoms[i].res,"TOY",3);
-		strncpy(atoms[i].atm,"ATOM",4);
-    	strncpy(atoms[i].name,"CA",2);
-    	strncpy(atoms[i].chain,"A",1);
-    	strncpy(atoms[i].elem,"C",1);
-    	atoms[i].occ = 1.00;
-		ratmpos(i,1,atoms,&seed);
-		for(i=4;i<(N);i++)//allocates details
-        {
-            ratmpos(i,-1,atoms,&seed);
-            //gen_data(atoms,i,seed);
-			atoms[i].bfac = rbfac(&seed);
-    		atoms[i].atnum = atoms[i-1].atnum + 1;
-    		atoms[i].resnum = atoms[i-1].resnum + 1;
-			atoms[i].occ = 1.00;
+		ratmpos(i, i - 1, atoms, &seed);
+	}
 
-			strncpy(atoms[i].res,"TOY",3);
-			strncpy(atoms[i].atm,"ATOM",4);
-    		strncpy(atoms[i].name,"CA",2);
-    		strncpy(atoms[i].chain,"A",1);
-    		strncpy(atoms[i].elem,"C",1);
-			//printf("%s %s %d ",atoms[i].res,atoms[i].atm,atoms[i].atnum);
-			//printf("%s %s\n",atoms[i].name,atoms[i].chain);
-        }
-        connections(indexs,N,atoms);
-        cyc = cycle(indexs,N,atoms);
-		printf("\nconnectivity check %d\n",cyc);
-		i = 2; count++;
-    }while(cyc!=1);
+	connections(indexs, N, atoms);
 
-    write_pdb(fname,G,N,atoms);
-    sprintf(path,"%s/0.pdb",dir);
-    copy("h2.pdb",path);
+	write_pdb(fname, G, N, atoms);
+	sprintf(path, "%s/0.pdb", dir);
+	copy("h2.pdb", path);
 
-    fprintf(runs,"%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n",d,G[0],G[1],G[2],G[3],G[4]);//calculate allosteric free energy and save in seperate file
-    printf("\nSeed structure complete | %d attempts required\n----------------\n",count);
-
+	fprintf(runs, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);//calculate allosteric free energy and save in seperate file
+	printf("\nSeed structure complete | %d attempts required\n----------------\n", count);
 }
 
 void samples(char acc[],int n,int N,double sdist,int het)
