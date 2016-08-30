@@ -23,15 +23,17 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	printf("\n----------------------\nGenerating Seed Structure\n");
 
 	double ac = 0.5*sdist / sqrt(3);//stores site co-ords
-	char path[50];
+	char patha[50],pathb[50];
 	int i = 0, d = 0, cyc = 0, count = 0;
 	char fname[20] = "h2.pdb";
 	int s = time(NULL);
 	static int seed;
+	FILE *bonds
 	time_t t;
 	seed = -(int)time(&t);
-	printf("Writing ligands\n");
+
 	// Writing initial details
+	printf("Writing ligands\n");
 	//first ligand
 	atoms[i].atnum = N + 3;
 	atoms[i].resnum = N + 2;
@@ -61,6 +63,9 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	atoms[i].z = ac;
 	printf("Ligands written\n");
 	i++;
+
+	sprintf(pathb, "res.force");
+	bonds = fopen(pathb, "w");
 	//writing atoms
 	for (i = 2; i < N + 2; i++)
 	{
@@ -74,16 +79,22 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 		atoms[i].occ = 1.00;
 		atoms[i].bfac = rbfac(&seed);
 		ratmpos(i, i - 1, atoms, &seed);
+		if (i != 2)
+		{
+			fprintf(bonds, "  %d %s   %d %s   2", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain);
+		}
 	}
 
 	connections(indexs, N, atoms);
 
 	write_pdb(fname, G, N, atoms);
-	sprintf(path, "%s/0.pdb", dir);
-	copy("h2.pdb", path);
+	sprintf(patha, "%s/0.pdb", dir);
+	copy("h2.pdb", patha);
 
 	fprintf(runs, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);//calculate allosteric free energy and save in seperate file
 	printf("\nSeed structure complete | %d attempts required\n----------------\n", count);
+
+	fclose(pathb);
 }
 
 void samples(char acc[],int n,int N,double sdist,int het)
@@ -95,7 +106,6 @@ void samples(char acc[],int n,int N,double sdist,int het)
     int d_t,tip=420;
 	static int seed;
 	seed = -(int)time(&t0);
-
     FILE *runsa;
     mkdir(acc,S_IRWXU); //make directory for storing sample
 	sprintf(pathb,"%ssampleruns.txt",acc);
