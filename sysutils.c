@@ -59,7 +59,7 @@ void ddpt(char fname[])
 {
     printf("\n\nCalling DDPT\n\n");
 
-    char* arg_list1[]={"genENM","-pdb",fname,"-het","-ca","-c","8",NULL};//list of arguments for spawn
+    char* arg_list1[]={"genENM","-pdb",fname,"-fcust","res.force","-het","-ca","-c","8",NULL};//list of arguments for spawn
     spawn("/usr/local/DDPT/GENENMM",arg_list1);
 
     char* arg_list2[]={"diagstd",NULL};//list of arguments for spawn
