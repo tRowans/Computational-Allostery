@@ -35,8 +35,8 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	// Writing initial details
 	printf("Writing ligands\n");
 	//first ligand
-	atoms[i].atnum = N + 3;
-	atoms[i].resnum = N + 2;
+	atoms[i].atnum = N + 1;
+	atoms[i].resnum = N;
 	strncpy(atoms[i].atm, "HETATM", 6);
 	strncpy(atoms[i].res, "LIG", 3);
 	strncpy(atoms[i].name, "CA", 2);
@@ -49,8 +49,8 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	atoms[i].z = -ac;
 	i++;
 	//second ligand
-	atoms[i].atnum = N + 4;
-	atoms[i].resnum = N + 3;
+	atoms[i].atnum = N + 2;
+	atoms[i].resnum = N + 1;
 	strncpy(atoms[i].atm, "HETATM", 6);
 	strncpy(atoms[i].res, "LIG", 3);
 	strncpy(atoms[i].name, "CA", 2);
@@ -67,7 +67,7 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	sprintf(pathb, "res.force");
 	bonds = fopen(pathb, "w");
 	//writing atoms
-	for (i = 2; i < N + 2; i++)
+	for (i = 2; i < N; i++)
 	{
 		atoms[i].atnum = i - 1;
 		atoms[i].resnum = i - 1;

@@ -39,9 +39,9 @@ int main(int argc,char* argl[])
     opt=get_opt("-N",argl,argc,cmd);
     if(opt==0)
     {
-        N=(int)strtod(cmd,NULL);
+        N=(int)strtod(cmd,NULL)+2;
         printf("\n%d non-ligand nodes\n",N);
-        if(N<=2){printf("\nNode number must be greater than 2\n");exit(0);}
+        if(N<=4){printf("\nNode number must be greater than 2\n");exit(0);}
     }
     else if(opt==-1){printf("\nNode number must be greater than 2\n");exit(0);}
     else
@@ -131,7 +131,7 @@ int main(int argc,char* argl[])
     //runs to times
     {
         mkdir(path,S_IRWXU);
-        j = monte(N+2,sdist,het,co,&iters,pathi);
+        j = monte(N,sdist,het,co,&iters,pathi);
         //strcat(path,"/");
 
         sprintf(sol,"%ssol_%d_h%d_t%d_iter%d.pdb",path,co+1,het,i,iters);
