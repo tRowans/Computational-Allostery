@@ -74,7 +74,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
     int cont=0,con=0;
     int rn, an;
     int i=1,hetc=0,j;
-    double rdist;
+    double rdist, coin;
     rn=floor(urand(seed,0,N));
     while(/*con<=(1e5) &&*/cont==0)
     {
@@ -88,51 +88,64 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
         xyzo[2] = atoms[rn].z;
         i = ainb("HETATM",atoms[rn].atm);
         if(i==0 && het==0){rn = floor(urand(seed,0,N)); continue;}//if fixed ligands and ligand selected for move
-        an=floor(urand(seed,0,N));
-        if(rn!=an)//selected nodes okay
-        {
-            rdist=urand(seed,2,8);
-            if(i==1){
-                ratmpos(rn,an,atoms,seed);
-            }
-            else if(i==0){
-                ratmpos(rn,rn,atoms,seed);
-            }
+		//Choosing which atom to move relative to
+		if (rn == 2) { an = 3; }  //First atom in chain is only connected to one atom
+		else if (rn == N - 1) { an = N - 2; }  //Last atom in chain is only connected to one atom
+		else //Other atoms can move relative to either. Choose one at random
+		{
+			coin = urand(seed, 0, 1);
+			if (coin < 0.5) { an = rn - 1; }
+			else { an = rn + 1; }
+		}
 
-            if(spache(atoms,rn,N)==1)//test physical space (x,y,z) unoccupied
-            {
-                cont = 0;
-                atoms[rn].x = xyzo[0];
-				atoms[rn].y = xyzo[1];
-				atoms[rn].z = xyzo[2];
-                printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
-                continue;
-            }
-
-            connections(indexs,N,atoms);
-
-            if(cycle(indexs,N,atoms)!=1)
-            //if move disconnects
-            {
-                //printf("\nDisconnected... Retry...");
-                cont = 0;
-                con++;
-                atoms[rn].x = xyzo[0];
-				atoms[rn].y = xyzo[1];
-				atoms[rn].z = xyzo[2];
-                printf("\ntrying cyc %d\n",con);
-                rn = floor(urand(seed,0,N));
-                continue;
-            }
-            else{
-                printf("\nmove found %d\n",con);
-				cont = 1;
-            }
+		//Move atom
+        rdist=urand(seed,2,8);
+        if(i==1){
+            ratmpos(rn,an,atoms,seed);  //Normal atoms move relative to other atoms
         }
-        else
-        //selected nodes not okay
+        else if(i==0){
+            ratmpos(rn,rn,atoms,seed);  //Ligands move relative to themselves
+        }
+
+        if(spache(atoms,rn,N)==1)//test physical space (x,y,z) unoccupied
         {
             cont = 0;
+            atoms[rn].x = xyzo[0];
+			atoms[rn].y = xyzo[1];
+			atoms[rn].z = xyzo[2];
+            printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
+            continue;
+        }
+
+        connections(indexs,N,atoms);
+
+        if(cycle(indexs,N,atoms)!=1)
+        //if move disconnects
+        {
+            //printf("\nDisconnected... Retry...");
+            cont = 0;
+            con++;
+            atoms[rn].x = xyzo[0];
+			atoms[rn].y = xyzo[1];
+			atoms[rn].z = xyzo[2];
+            printf("\ntrying cyc %d\n",con);
+            rn = floor(urand(seed,0,N));
+            continue;
+        }
+
+		if (rn != 2 && rn != N - 1 && coin < 0.5);
+		{
+			//Check not disconnected from rn + 1
+		}
+
+		if (rn != 2 && rn != N - 1 && coin >= 0.5);
+		{
+			//Check not disconnected from rn - 1
+		}
+
+        else{
+            printf("\nmove found %d\n",con);
+			cont = 1;
         }
     }
     if(cont==0){printf("\nNo move found\n");return con;}
