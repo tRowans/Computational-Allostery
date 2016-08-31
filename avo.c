@@ -79,9 +79,9 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 		atoms[i].occ = 1.00;
 		atoms[i].bfac = rbfac(&seed);
 		ratmpos(i, i - 1, atoms, &seed);
-		if (i != 2)
+		if(i != 2)
 		{
-			fprintf(bonds, "  %d %s   %d %s   2", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain);
+			fprintf(bonds, "  %d %s   %d %s   2\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain);
 		}
 	}
 
