@@ -75,6 +75,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
     int rn, an;
     int i=1,hetc=0,j;
     double rdist, coin;
+	double sep[3];
     rn=floor(urand(seed,0,N));
     while(/*con<=(1e5) &&*/cont==0)
     {
@@ -133,14 +134,20 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
             continue;
         }
 
-		if (rn != 2 && rn != N - 1 && coin < 0.5);
+		if (rn != 2 && rn != N - 1 && coin < 0.5);  //Check not disconnected from rn + 1
 		{
-			//Check not disconnected from rn + 1
+			sep[0] = atoms[rn].x - atoms[rn + 1].x;
+			sep[1] = atoms[rn].y - atoms[rn + 1].y;
+			sep[2] = atoms[rn].z - atoms[rn + 1].z;
+			if (rad(sep[0], sep[1], sep[2]) > 8) { continue; }
 		}
 
-		if (rn != 2 && rn != N - 1 && coin >= 0.5);
+		if (rn != 2 && rn != N - 1 && coin >= 0.5);  //Check not disconnected from rn - 1
 		{
-			//Check not disconnected from rn - 1
+			sep[0] = atoms[rn].x - atoms[rn - 1].x;
+			sep[1] = atoms[rn].y - atoms[rn - 1].y;
+			sep[2] = atoms[rn].z - atoms[rn - 1].z;
+			if (rad(sep[0], sep[1], sep[2]) > 8) { continue; }
 		}
 
         else{
