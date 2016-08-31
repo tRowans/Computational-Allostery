@@ -67,6 +67,11 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 
 	sprintf(pathb, "res.force");
 	bonds = fopen(pathb, "w");
+	if (bonds == NULL)
+	{
+		printf("Could not create ffile");
+		exit(0);
+	}
 	//writing atoms
 	for (i = 2; i < N; i++)
 	{
@@ -82,11 +87,15 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 		ratmpos(i, i - 1, atoms, &seed);
 		if(i != 2)
 		{
-			fprintf(bonds, " %4d %s %4d %s %8.1f\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain, bb_str);
+			fprintf(bonds, " %4d %s %4d %s %8.1lf\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain, bb_str);
 		}
 	}
 
+	fclose(bonds);  //Closes for writing
+
 	connections(indexs, N, atoms);
+
+	fopen(bonds, "r");  //Opens for reading
 
 	write_pdb(fname, G, N, atoms);
 	sprintf(patha, "%s/0.pdb", dir);
@@ -94,8 +103,6 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 
 	fprintf(runs, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);//calculate allosteric free energy and save in seperate file
 	printf("\nSeed structure complete | %d attempts required\n----------------\n", count);
-
-	fclose(bonds);
 }
 
 void samples(char acc[],int n,int N,double sdist,int het)
@@ -190,7 +197,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 	static int seed;
  	seed = -(int)time(&t0);
 
-    FILE *runsa;
+	FILE *runsa;
     mkdir(acc,S_IRWXU);
     runsa = fopen("runs.txt","w");
     if(runsa==NULL)//checking for success
@@ -286,6 +293,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 
     printf("\n-------------------------------------------\nRun Complete\n");
     fclose(runsa);
+	fclose("res.force");
     free(atoms);
     for(i=0;i<N;i++)
     {
@@ -294,5 +302,3 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     free(indexs);
     return j;
 }
-
-
