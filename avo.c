@@ -23,6 +23,7 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	printf("\n----------------------\nGenerating Seed Structure\n");
 
 	double ac = 0.5*sdist / sqrt(3);//stores site co-ords
+	double bb_str = 2.0;
 	char patha[50],pathb[50];
 	int i = 0, d = 0, cyc = 0, count = 0;
 	char fname[20] = "h2.pdb";
@@ -81,7 +82,7 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 		ratmpos(i, i - 1, atoms, &seed);
 		if(i != 2)
 		{
-			fprintf(bonds, "  %d %s   %d %s   2\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain);
+			fprintf(bonds, " %4d %s %4d %s %8.1f\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain, bb_str);
 		}
 	}
 
