@@ -28,7 +28,7 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	char fname[20] = "h2.pdb";
 	int s = time(NULL);
 	static int seed;
-	FILE *bonds
+	FILE *bonds;
 	time_t t;
 	seed = -(int)time(&t);
 
@@ -94,7 +94,7 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	fprintf(runs, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);//calculate allosteric free energy and save in seperate file
 	printf("\nSeed structure complete | %d attempts required\n----------------\n", count);
 
-	fclose(pathb);
+	fclose(bonds);
 }
 
 void samples(char acc[],int n,int N,double sdist,int het)
