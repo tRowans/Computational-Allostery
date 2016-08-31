@@ -146,7 +146,7 @@ void samples(char acc[],int n,int N,double sdist,int het)
     }
 
 
-    make_seed(runsa,pathb,N,sdist,G,atoms,indexs);
+    make_seed_b(runsa,pathb,N,sdist,G,atoms,indexs);
 
     k=0;
     connections(indexs,N,atoms);
@@ -227,7 +227,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     node *atoms;
     atoms = calloc(N,sizeof(*atoms));
     //OPTION FOR SEED FROM SAMPLE
-    make_seed(runsa,"runs",N,sdist,G,atoms,indexs);
+    make_seed_b(runsa,"runs",N,sdist,G,atoms,indexs);
     enms(j);j++;
     G0 = G[4];
     Gmax = G0;
