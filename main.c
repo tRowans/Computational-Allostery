@@ -39,7 +39,7 @@ int main(int argc,char* argl[])
     opt=get_opt("-N",argl,argc,cmd);
     if(opt==0)
     {
-        N=(int)strtod(cmd,NULL)+2;
+        N=(int)strtod(cmd,NULL);
         printf("\n%d non-ligand nodes\n",N);
         if(N<=4){printf("\nNode number must be greater than 2\n");exit(0);}
     }
@@ -103,7 +103,7 @@ int main(int argc,char* argl[])
 		n=(int)strtod(cmd,NULL);
         printf("\nCreating new sample of %d files\n",n);
 		sprintf(path,"sample_N%d_h%d/",N,het);
-        if(n>0){samples(path,n,N,sdist,het);}
+        if(n>0){samples(path,n,N+2,sdist,het);}
         else{printf("\nSample size not found\nSTOP\n");exit(0);}
     }
     else
@@ -131,7 +131,7 @@ int main(int argc,char* argl[])
     //runs to times
     {
         mkdir(path,S_IRWXU);
-        j = monte(N,sdist,het,co,&iters,pathi);
+        j = monte(N+2,sdist,het,co,&iters,pathi);
         //strcat(path,"/");
 
         sprintf(sol,"%ssol_%d_h%d_t%d_iter%d.pdb",path,co+1,het,i,iters);
