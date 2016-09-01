@@ -185,7 +185,7 @@ void readen_init(char *path, double G[5])
 	fp = fopen(path, "r");
 	if (fp == NULL)
 	{
-		printf("\nSample file: %s \nDoes not exist\nSTOP\n", filename);
+		printf("\nSample file: %s \nDoes not exist\nSTOP\n", path);
 		exit(0);
 	}
 
