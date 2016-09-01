@@ -87,7 +87,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 
 	connections(indexs, N, atoms);
 
-	fopen(res.force, "r");  //Opens for reading
+	fopen("res.force", "r");  //Opens for reading
 
 	write_pdb(fname, G, N, atoms);
 	sprintf(patha, "%s/0.pdb", dir);
