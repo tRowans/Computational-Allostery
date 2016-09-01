@@ -178,11 +178,18 @@ double readen()
 void readen_init(char *path, double G[5])
 //Reads G0, G11, G12, G2 and DDG for initial seed states from specified file (sampleruns.txt)
 {
-	char line[72], buffer[50], *end;
+	char line[72], *buffer;
 	int i=0, j=0, k=0;
 	FILE* fp;
 
 	fp = fopen(path, "r");
+	if (fp == NULL)
+	{
+		printf("\nSample file: %s \nDoes not exist\nSTOP\n", filename);
+		exit(0);
+	}
+
+	buffer = (char *)calloc(50, sizeof(char));
 
 	for (i = 0; i < 2; i++)
 	{
@@ -194,7 +201,7 @@ void readen_init(char *path, double G[5])
 			{
 				buffer[k] = line[7 + 12 * j + k];
 			}
-			G[j] = strtod(buffer, &end);
+			G[j] = strtod(buffer, NULL);
 		}
 	}
 
