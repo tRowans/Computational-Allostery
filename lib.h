@@ -84,6 +84,7 @@ int countline_pdb(FILE* fp);
 void read_pdb(FILE* fp,node *atoms);
 void getres(char *resi);
 double readen();
+void readen_init(char *path, double G[5]);
 
 void wlpdb(FILE* fname, node atom);
 void terch(FILE* fname,char chain[1],char res[3],int atnum, int resnum);

@@ -87,7 +87,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 
 	connections(indexs, N, atoms);
 
-	fopen(bonds, "r");  //Opens for reading
+	fopen(res.force, "r");  //Opens for reading
 
 	write_pdb(fname, G, N, atoms);
 	sprintf(patha, "%s/0.pdb", dir);
@@ -247,7 +247,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 	copy("h2.pdb", "runs/0.pdb"); //Saves initial seed as first step in evolution
     enms(j);j++;
 	sprintf(patha,"%ssampleruns.txt",sdir);
-	readen_init(patha, G)  //Get energies for seed sample
+	readen_init(patha, G);  //Get energies for seed sample
 	G0 = G[4];
 	Gmax = G0;
     T = Temp(patha);
