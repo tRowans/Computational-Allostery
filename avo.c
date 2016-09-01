@@ -234,12 +234,13 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 
     node *atoms;
     atoms = calloc(N,sizeof(*atoms));
-    //OPTION FOR SEED FROM SAMPLE
-    make_seed_b(runsa,"runs",N,sdist,G,atoms,indexs);
+
+	copy("h2.pdb", "runs/0.pdb"); //Saves initial seed as first step in evolution
     enms(j);j++;
-    G0 = G[4];
-    Gmax = G0;
 	sprintf(patha,"%ssampleruns.txt",sdir);
+	readen_init(patha, G)  //Get energies for seed sample
+	G0 = G[4];
+	Gmax = G0;
     T = Temp(patha);
     Nm[0]=0;Nm[1]=0;Nm[2]=0;
     connections(indexs,N,atoms);

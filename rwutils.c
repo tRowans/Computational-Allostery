@@ -175,6 +175,33 @@ double readen()
     return mod;
 }
 
+void readen_init(char *path, double G[5])
+//Reads G0, G11, G12, G2 and DDG for initial seed states from specified file (sampleruns.txt)
+{
+	char line[72], buffer[50], *end;
+	int i=0, j=0, k=0;
+	FILE* fp;
+
+	fp = fopen(path, "r");
+
+	for (i = 0; i < 2; i++)
+	{
+		fgets(line, 72, fp);
+		if (i == 0) { continue; }
+		for (j = 0; j < 5; j++);
+		{
+			for (k = 0; k < 12; k++)
+			{
+				buffer[k] = line[7 + 12 * j + k];
+			}
+			G[j] = strtod(buffer, &end);
+		}
+	}
+
+	fclose(fp);
+	
+}
+
 //-----------------------------------
 
 void wlpdb(FILE* fname, node atom)
