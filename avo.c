@@ -13,7 +13,7 @@
 
 //depenedencies: all
 
-void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node *atoms, int **indexs)
+void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, double G[5], node *atoms, int **indexs)
 //Generates a model protein formed from N nodes joined by a backbone.
 //Ligands are generated at a distance specified by sdist.
 //Non-ligand nodes are generated with each node connected to the previous one.
@@ -24,12 +24,11 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 
 	double ac = 0.5*sdist / sqrt(3);//stores site co-ords
 	double bb_str = 2.0;
-	char patha[50],pathb[50];
+	char patha[50];
 	int i = 0, d = 0, cyc = 0, count = 0;
 	char fname[20] = "h2.pdb";
 	int s = time(NULL);
 	static int seed;
-	FILE *bonds;
 	time_t t;
 	seed = -(int)time(&t);
 
@@ -65,13 +64,6 @@ void make_seed_b(FILE *runs, char dir[], int N, double sdist, double G[5], node 
 	printf("Ligands written\n");
 	i++;
 
-	sprintf(pathb, "res.force");
-	bonds = fopen(pathb, "w");
-	if (bonds == NULL)
-	{
-		printf("Could not create ffile");
-		exit(0);
-	}
 	//writing atoms
 	for (i = 2; i < N; i++)
 	{
@@ -109,12 +101,12 @@ void samples(char acc[],int n,int N,double sdist,int het)
 {
     double xyzo[3],G0,G[5];
     int d=1,k,i=0,pa;
-    char patha[60],pathb[99];
+    char patha[60],pathb[99],pathc[99];
     time_t t0,t1;
     int d_t,tip=420;
 	static int seed;
 	seed = -(int)time(&t0);
-    FILE *runsa;
+    FILE *runsa, *bonds;
     mkdir(acc,S_IRWXU); //make directory for storing sample
 	sprintf(pathb,"%ssampleruns.txt",acc);
     runsa=fopen(pathb,"w");
@@ -127,6 +119,14 @@ void samples(char acc[],int n,int N,double sdist,int het)
 
 	sprintf(pathb,"%sstructs/",acc); //make directory for storing structs in sample
 	mkdir(pathb,S_IRWXU);
+
+	sprintf(pathc, "res.force");
+	bonds = fopen(pathc, "w");
+	if (bonds == NULL)
+	{
+		printf("\nCould not create ffile\nSTOP");
+		exit(0);
+	}
 	
     t0=time(NULL);
 
@@ -154,7 +154,7 @@ void samples(char acc[],int n,int N,double sdist,int het)
     }
 
 
-    make_seed_b(runsa,pathb,N,sdist,G,atoms,indexs);
+    make_seed_b(runsa,bonds,pathb,N,sdist,G,atoms,indexs);
 
     k=0;
     connections(indexs,N,atoms);
@@ -178,6 +178,7 @@ void samples(char acc[],int n,int N,double sdist,int het)
 
     printf("\n-------------------------------------------\nsample Complete\n");
     fclose(runsa);
+	fclose(bonds);
     free(atoms);
     for(i=0;i<N;i++)
     {
@@ -191,13 +192,13 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     double T,cool=0.95,sig,cdist,dist,msqrt;
     double xyzo[3],G0,G[5],Nm[3],Gmax,cdistbest;
     int d=1,io=0,k,j=0,pa,count=0,i=0,best;
-    char patha[60],acc[20]="runs";
+    char patha[60],acc[20]="runs",pathb[60];
     time_t t0,t1;
     int d_t,tip=420;
 	static int seed;
  	seed = -(int)time(&t0);
 
-	FILE *runsa;
+	FILE *runsa, *bonds;
     mkdir(acc,S_IRWXU);
     runsa = fopen("runs.txt","w");
     if(runsa==NULL)//checking for success
@@ -206,6 +207,14 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
         exit(0);
     }
     fprintf(runsa,"#         G0          G11          G12          G2           DDG         T        Msqr    C.O.M   LigDist\n");
+
+	sprintf(pathb, "res.force");
+	bonds = fopen(pathb, "r");
+	if (bonds == NULL)
+	{
+		printf("\nffile could not be opened\nSTOP");
+		exit(0);
+	}
 
     t0=time(NULL);
 
@@ -294,7 +303,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 
     printf("\n-------------------------------------------\nRun Complete\n");
     fclose(runsa);
-	fclose("res.force");
+	fclose(bonds);
     free(atoms);
     for(i=0;i<N;i++)
     {
