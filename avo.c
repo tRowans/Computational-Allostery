@@ -248,6 +248,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     enms(j);j++;
 	sprintf(patha,"%ssampleruns.txt",sdir);
 	readen_init(patha, G);  //Get energies for seed sample
+	fprintf(runsa, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);
 	G0 = G[4];
 	Gmax = G0;
     T = Temp(patha);
