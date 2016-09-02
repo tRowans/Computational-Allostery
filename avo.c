@@ -193,7 +193,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     double T,cool=0.95,sig,cdist,dist,msqrt;
     double xyzo[3],G0,G[5],Nm[3],Gmax,cdistbest;
     int d=1,io=0,k,j=1,pa,count=0,i=0,best;
-    char patha[60],acc[20]="runs",pathb[60];
+	char patha[60], pathb[60], pathc[60], acc[20] = "runs";
     time_t t0,t1;
     int d_t,tip=420;
 	static int seed;
@@ -246,11 +246,12 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     atoms = calloc(N,sizeof(*atoms));
 
 	sprintf(patha,"%ssampleruns.txt",sdir);
+	sprintf(pathc, "%sstructs/0.pdb", sdir);
 	readen_init(patha, G);  //Get energies for seed sample
 	fprintf(runsa, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);  //Write initial energies to runs.txt file
 	G0 = G[4];
 	Gmax = G0;
-	copy("%sstructs/0.pdb", "runs/0.pdb", sdir); //Saves initial seed as first step in evolution
+	copy(pathc, "runs/0.pdb"); //Saves initial seed as first step in evolution
 	mv("0.vmd", "runs/0.vmd"); //Moves initial vmd file to runs
     T = Temp(patha);
     Nm[0]=0;Nm[1]=0;Nm[2]=0;
