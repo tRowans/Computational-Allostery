@@ -139,7 +139,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 			sep[0] = atoms[rn].x - atoms[rn + 1].x;
 			sep[1] = atoms[rn].y - atoms[rn + 1].y;
 			sep[2] = atoms[rn].z - atoms[rn + 1].z;
-			if(rad(sep[0], sep[1], sep[2]) > 8) 
+			if(rad(sep[0], sep[1], sep[2]) >= M_CUT) 
 			{
 				cont = 0;
 				con++;
@@ -157,7 +157,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 			sep[0] = atoms[rn].x - atoms[rn - 1].x;
 			sep[1] = atoms[rn].y - atoms[rn - 1].y;
 			sep[2] = atoms[rn].z - atoms[rn - 1].z;
-			if(rad(sep[0], sep[1], sep[2]) > 8)
+			if(rad(sep[0], sep[1], sep[2]) >= M_CUT)
 			{
 				cont = 0;
 				con++;
