@@ -179,7 +179,7 @@ void readen_init(char *path, double G[5])
 //Reads G0, G11, G12, G2 and DDG for initial seed states from specified file (sampleruns.txt)
 {
 	char line[72], *buffer;
-	int i=0, j=0, k=0;
+	int i=0, j=0, k=0, d=0;
 	FILE* fp;
 
 	fp = fopen(path, "r");
@@ -195,13 +195,21 @@ void readen_init(char *path, double G[5])
 	{
 		fgets(line, 72, fp);
 		if (i == 0) { continue; }
-		for (j = 0; j < 5; j++);
+		printf("\n First line is %s\n", line);  //TEST CODE
+		for (j = 0; j < 5; j++)
 		{
 			for (k = 0; k < 12; k++)
 			{
-				buffer[k] = line[7 + 12 * j + k];
+				buffer[k] = line[7 + 13 * j + k];
 			}
+			printf("\nBuffer is %s\n", buffer);
 			G[j] = strtod(buffer, NULL);
+		}
+
+		//TEST CODE
+		for (d = 0; d < 5; d++)
+		{
+			printf("G element %d is %lf\n", d, G[d]);
 		}
 	}
 
