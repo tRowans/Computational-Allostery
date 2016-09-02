@@ -120,7 +120,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed);
 //----------------------
 
 //avo
-void make_seed(FILE *runs,char dir[],int N,double sdist,double G[5],node *atoms,int **indexs);
+void make_seed_b(FILE *runs, FILE *bonds,char dir[],int N,double sdist,double G[5],node *atoms,int **indexs);
 void samples(char acc[],int n,int N,double sdist,int het);
 int monte(int N,double sdist,int het,int co,int *iters,char sdir[]);
 //---------------------
