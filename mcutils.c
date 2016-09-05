@@ -120,20 +120,6 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 
         connections(indexs,N,atoms);
 
-        if(cycle(indexs,N,atoms)!=1)
-        //if move disconnects
-        {
-            //printf("\nDisconnected... Retry...");
-            cont = 0;
-            con++;
-            atoms[rn].x = xyzo[0];
-			atoms[rn].y = xyzo[1];
-			atoms[rn].z = xyzo[2];
-            printf("\ntrying cyc %d\n",con);
-            rn = floor(urand(seed,0,N));
-            continue;
-        }
-
 		if(rn != 2 && rn != N - 1 && coin < 0.5)  //Check not disconnected from rn + 1
 		{
 			sep[0] = atoms[rn].x - atoms[rn + 1].x;

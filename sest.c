@@ -46,7 +46,6 @@ void ratmpos(int i,int j,node *atoms,int *seed)
 	//printf("j = %d, rad = %5.3g\n",j,rdist);
     do
     {
-		if(j==-1){j=floor(urand(seed,0,i));}
 		rdist = urand(seed,A_CUT,M_CUT);
     	phi = urand(seed,0,2*M_PI);
     	theta = acos(1- 2*ran2(seed));
@@ -59,7 +58,6 @@ void ratmpos(int i,int j,node *atoms,int *seed)
     	atoms[i].z = atoms[j].z + rdist*cos(theta);
 
    		u = spache_seed(atoms,i);
-		j = -1;
     } while(u==1);
 	//printf("u = %d\n",u);
 }
