@@ -65,7 +65,21 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 	i++;
 
 	//writing atoms
-	for (i = 2; i < N; i++)
+	atoms[i].atnum = 1;
+	atoms[i].resnum = 1;
+	strncpy(atoms[i].res, "TOY", 3);
+	strncpy(atoms[i].atm, "ATOM", 4);
+	strncpy(atoms[i].name, "CA", 2);
+	strncpy(atoms[i].chain, "A", 1);
+	strncpy(atoms[i].elem, "C", 1);
+	atoms[i].occ = 1.00;
+	atoms[i].bfac = rbfac(&seed);
+	atoms[i].x = 0;
+	atoms[i].y = 0;
+	atoms[i].z = 0;
+	i++;
+
+	for (i = 3; i < N; i++)
 	{
 		atoms[i].atnum = i - 1;
 		atoms[i].resnum = i - 1;
@@ -77,10 +91,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 		atoms[i].occ = 1.00;
 		atoms[i].bfac = rbfac(&seed);
 		ratmpos(i, i - 1, atoms, &seed);
-		if(i != 2)
-		{
-			fprintf(bonds, " %4d %s %4d %s %8.1lf\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain, bb_str);
-		}
+		fprintf(bonds, " %4d %s %4d %s %8.1lf\n", atoms[i].resnum, atoms[i].chain, atoms[i - 1].resnum, atoms[i - 1].chain, bb_str);
 	}
 
 	fclose(bonds);  //Closes for writing
