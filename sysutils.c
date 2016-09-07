@@ -85,7 +85,7 @@ void cpdir(char src[],char dest[])
 
 void rmvdir(char src[])
 {
-	char* arg_l[]={"rm","-r","-f",src,"NULL"};
+	char* arg_l[]={"rm","-r","-f",src,NULL};
 	spawn("rm",arg_l);
 }
 //----------------------------
