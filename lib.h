@@ -13,7 +13,7 @@
 #define lib_h__
 
 #define M_CUT 8.0
-#define A_CUT 3.0
+#define A_CUT 2.0
 #define M_PI 3.14159265359
 
 typedef struct

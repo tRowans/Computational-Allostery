@@ -74,7 +74,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
     int cont=0,con=0;
     int rn, an;
     int i=1,hetc=0,j;
-    double rdist, coin;
+    double coin;
 	double sep[3];
     rn=floor(urand(seed,0,N));
     while(/*con<=(1e5) &&*/cont==0)
@@ -100,7 +100,6 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 		}
 
 		//Move atom
-        rdist=urand(seed,2,8);
         if(i==1){
             ratmpos(rn,an,atoms,seed);  //Normal atoms move relative to other atoms
         }
