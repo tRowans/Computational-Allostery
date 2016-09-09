@@ -98,6 +98,8 @@ int main(int argc,char* argl[])
     }
     if(tot<1){tot=1;}
 
+	fflush(stdout);
+
     if(get_opt("-sam",argl,argc,cmd)==0)
     {
 		n=(int)strtod(cmd,NULL);
