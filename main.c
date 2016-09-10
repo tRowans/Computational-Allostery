@@ -111,6 +111,7 @@ int main(int argc,char* argl[])
     else
     {
         printf("\nUsing existing sample file\n");
+		fflush(stdout);
     }
 
 

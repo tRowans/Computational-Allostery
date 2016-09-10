@@ -24,6 +24,7 @@ int spawn(char* program,char** arg_list)
         if(WIFEXITED(child_status))
         {
             printf("\nchild exited normally with exit code %d\n\n",WEXITSTATUS(child_status));
+			fflush(stdout);
         }
         else
         {
@@ -58,6 +59,7 @@ void ddpt(char fname[])
 //call DDPT
 {
     printf("\n\nCalling DDPT\n\n");
+	fflush(stdout);
 
     char* arg_list1[]={"genENM","-pdb",fname,"-fcust","res.force","-het","-ca","-c","8",NULL};//list of arguments for spawn
     spawn("/usr/local/DDPT/GENENMM",arg_list1);
@@ -67,6 +69,8 @@ void ddpt(char fname[])
 
     char* arg_list3[]={"freqeuncy",NULL};//list of arguments for spawn
     spawn("/usr/local/DDPT/FREQEN",arg_list3);
+
+	fflush(stdout);
 }
 
 void enms(int d)
@@ -75,6 +79,7 @@ void enms(int d)
     sprintf(cpy,"runs/%d.vmd",d);
     copy("ENM.vmd",cpy);
     printf("\n%d ENM file stored for animation\n",d);
+	fflush(stdout);
 }
 
 void cpdir(char src[],char dest[])

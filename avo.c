@@ -96,6 +96,8 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 
 	fclose(bonds);  //Closes for writing
 
+	fflush(stdout);
+
 	connections(indexs, N, atoms);
 
 	fopen("res.force", "r");  //Opens for reading
@@ -106,6 +108,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 
 	fprintf(runs, "%-6d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf\n", d, G[0], G[1], G[2], G[3], G[4]);//calculate allosteric free energy and save in seperate file
 	printf("\nSeed structure complete | %d attempts required\n----------------\n", count);
+	fflush(stdout);
 }
 
 void samples(char acc[],int n,int N,double sdist,int het)
@@ -189,6 +192,7 @@ void samples(char acc[],int n,int N,double sdist,int het)
     }
 
     printf("\n-------------------------------------------\nsample Complete\n");
+	fflush(stdout);
     fclose(runsa);
 	fclose(bonds);
     free(atoms);

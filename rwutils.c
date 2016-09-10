@@ -101,6 +101,7 @@ int countline_pdb(FILE* fp)
 		fgets(lign,sizeof lign,fp);//move to next line
     }
     rewind(fp); printf("\n%d Atoms found\n",i);
+	fflush(stdout);
     return i;
 }
 
@@ -109,6 +110,7 @@ void read_pdb(FILE* fp,node *atoms)
 //make ligs first in list
 {
     printf("\nReading pdb data\n");
+	fflush(stdout);
     int i=0,j=1,fcheck;
     char *buff,*b1,lign[10],dump[99],altlock[2];
     fpos_t position;
@@ -135,6 +137,7 @@ void read_pdb(FILE* fp,node *atoms)
     }while(buff!= NULL);
 
     printf("\n%d Atoms read\n",i);
+	fflush(stdout);
 }
 
 double readen()
@@ -152,6 +155,7 @@ double readen()
         exit(0);
     }
     printf("\nReading \"mode.energy\" file\n");
+	fflush(stdout);
     do
     {
         check=fgets(lign,sizeof lign,fre);
@@ -312,6 +316,7 @@ void write_pdb(char fname[],double G[5],int N,node *atoms)
 {
     FILE *h2;
     printf("\n\nWriting structure to file\n--------------------\n");
+	fflush(stdout);
     int i=0,j=0;
     write_apo(G,N,atoms);
     write_h1(G,N,atoms);
@@ -343,6 +348,7 @@ void write_pdb(char fname[],double G[5],int N,node *atoms)
     G[4]=ddg(G);
     printf("\nStructure Complete\n");
     printf("\nAllosteric free energy is: %lf\n--------------------\n",G[4]);
+	fflush(stdout);
 }
 
 //--------------------------------

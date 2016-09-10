@@ -59,6 +59,7 @@ double Temp(char filename[])
     printf("\n");
     sig = sqrt((Nmu2-(SQR(Nmu)/N))/(N-1));
     printf("\nTemperature is: %lf\n--------------------------\n",sig);
+	fflush(stdout);
     return sig;
 }
 
@@ -114,6 +115,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 			atoms[rn].y = xyzo[1];
 			atoms[rn].z = xyzo[2];
             printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
+			fflush(stdout);
             continue;
         }
 
@@ -132,6 +134,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 				atoms[rn].y = xyzo[1];
 				atoms[rn].z = xyzo[2];
 				printf("\ntrying cyc %d\n", con);
+				fflush(stdout);
 				rn = floor(urand(seed, 0, N));
 				continue;
 			}
@@ -150,6 +153,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 				atoms[rn].y = xyzo[1];
 				atoms[rn].z = xyzo[2];
 				printf("\ntrying cyc %d\n", con);
+				fflush(stdout);
 				rn = floor(urand(seed, 0, N));
 				continue;
 			}
@@ -161,6 +165,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
         }
     }
     if(cont==0){printf("\nNo move found\n");return con;}
+	fflush(stdout);
     return rn;
 }
 
