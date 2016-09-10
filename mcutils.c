@@ -68,7 +68,7 @@ double Temp(char filename[])
 
 int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 //N is number of nodes, calculates montecarlo move.
-//het is 0 if fixed ligda site distance & 1 for variable
+//het is 0 if fixed ligand site distance & 1 for variable
 //moves a random node
 {
     //if(con>2.5e4){return con;}
@@ -115,6 +115,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 			atoms[rn].y = xyzo[1];
 			atoms[rn].z = xyzo[2];
             printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
+			printf("\ntrying cyc %d\n", con);
 			fflush(stdout);
             continue;
         }

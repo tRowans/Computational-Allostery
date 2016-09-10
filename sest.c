@@ -115,6 +115,8 @@ int spache(node *atoms, int i,int N)
         {
             bools = 1;
             printf("\nLigands too close\n");
+			printf("j= %4d | x= %5.2lf | y= %5.2lf | z= %5.2lf\n", j, atoms[j].x, atoms[j].y, atoms[j].z);
+			printf("rn= %4d | x= %5.2lf | y= %5.2lf | z= %5.2lf\n", i, atoms[i].x, atoms[i].y, atoms[i].z);
 			fflush(stdout);
             break;
         }
