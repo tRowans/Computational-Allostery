@@ -111,6 +111,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
         if(spache(atoms,rn,N)==1)//test physical space (x,y,z) unoccupied
         {
             cont = 0;
+			con++;
             atoms[rn].x = xyzo[0];
 			atoms[rn].y = xyzo[1];
 			atoms[rn].z = xyzo[2];

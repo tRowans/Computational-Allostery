@@ -99,19 +99,20 @@ void gen_data(node *atoms,int i,int *seed)
 
 int spache(node *atoms, int i,int N)
 //check occupation of x,y,z
+//Returns 0 if empty, 1 if filled
 {
-    int j,bools=0,het;//0 is empty 1 is filled
+    int j,bools=0,hett=1;
     double dist;
     if(ainb("HETATM",atoms[i].atm)==0)
     {
-        het = 0;
+        hett = 0;
     }
     for(j=0;j<N;j++)
     {
         if(i==j){continue;}
         //dist=SQR(x[i]-x[j])+SQR(y[i]-y[j])+SQR(z[i]-z[j]);
         dist = rad(atoms[i].x-atoms[j].x,atoms[i].y-atoms[j].y,atoms[i].z-atoms[j].z);
-        if(het==0 && ainb("HETATM",atoms[j].atm)==0 && dist<=M_CUT)
+        if(hett==0 && ainb("HETATM",atoms[j].atm)==0 && dist<=M_CUT)
         {
             bools = 1;
             printf("\nLigands too close\n");
