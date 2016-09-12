@@ -121,8 +121,6 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
             continue;
         }
 
-        connections(indexs,N,atoms);
-
 		if(rn != 2 && rn != N - 1 && coin < 0.5)  //Check not disconnected from rn + 1
 		{
 			sep[0] = atoms[rn].x - atoms[rn + 1].x;
