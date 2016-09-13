@@ -275,6 +275,12 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 	read_pdb(spdb, atoms);  //Reading data from seed pdb and storing in atoms struct
 	fclose(spdb);
 
+	int x = 0;
+	for (x = 0; x < N; x++)
+	{
+		printf("%s", atoms[x].atm);
+	}
+
     connections(indexs,N,atoms);
 
     while(T>fabs(Gmax*5e-4))
