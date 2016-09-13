@@ -144,7 +144,7 @@ void read_pdb(FILE* fp,node *atoms)
 				exit(0);
 			}
 
-			j++
+			j++;
 		}
 		else{fgets(dump,99,fp);}//move to next line
 		k++;
