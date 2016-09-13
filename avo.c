@@ -278,7 +278,7 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 	int x = 0;
 	for (x = 0; x < N; x++)
 	{
-		printf("%s", atoms[x].atm);
+		printf("\n Index %d is %s\n", x, atoms[x].atm);
 	}
 
     connections(indexs,N,atoms);
