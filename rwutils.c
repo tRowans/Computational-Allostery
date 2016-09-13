@@ -111,29 +111,43 @@ void read_pdb(FILE* fp,node *atoms)
 {
     printf("\nReading pdb data\n");
 	fflush(stdout);
-    int i=0,j=1,fcheck;
+    int i=0,j=2,k=1,fcheck;
     char *buff,*b1,lign[10],dump[99],altlock[2];
     fpos_t position;
     do
     {        
 		fgetpos(fp,&position);buff=fgets(lign,7,fp);
 		//fsetpos(fp,&position);b1=fgets(dump,99,fp);
-        if((ainb("ATOM",lign)==0)||(ainb("HETATM",lign)==0))
+        if(ainb("HETATM",lign)==0)
         {
             fsetpos(fp,&position);
             fcheck=fscanf(fp,"%6s%4d%4s %3s %1s %4d %8lf %8lf %8lf %6lf %6lf %2s \n",atoms[i].atm,&atoms[i].atnum,atoms[i].name,atoms[i].res,atoms[i].chain,&atoms[i].resnum,&atoms[i].x,&atoms[i].y,&atoms[i].z,&atoms[i].occ,&atoms[i].bfac,atoms[i].elem);
             if(fcheck!=12)
             {
 				printf("%-6s\n%-4d\n%-4s\n%-5s\n%-1s\n%-4d\n%-8lf\n%-8lf\n%-8lf\n%-6lf\n%-6lf\n%-2s\n",atoms[i].atm,atoms[i].atnum,atoms[i].name,atoms[i].res,atoms[i].chain,atoms[i].resnum,atoms[i].x,atoms[i].y,atoms[i].z,atoms[i].occ,atoms[i].bfac,atoms[i].elem);
-				printf("\nNot all data read from line %d\nSTOP\nfcheck=%d\n",j,fcheck);
+				printf("\nNot all data read from line %d\nSTOP\nfcheck=%d\n",k,fcheck);
 				printf("\n%s\n",dump);
                 exit(0);
             }
 	
             i++;
         }
+		if (ainb("ATOM", lign) == 0)
+		{
+			fsetpos(fp, &position);
+			fcheck = fscanf(fp, "%6s%4d%4s %3s %1s %4d %8lf %8lf %8lf %6lf %6lf %2s \n", atoms[j].atm, &atoms[j].atnum, atoms[j].name, atoms[j].res, atoms[j].chain, &atoms[j].resnum, &atoms[j].x, &atoms[j].y, &atoms[j].z, &atoms[j].occ, &atoms[j].bfac, atoms[j].elem);
+			if (fcheck != 12)
+			{
+				printf("%-6s\n%-4d\n%-4s\n%-5s\n%-1s\n%-4d\n%-8lf\n%-8lf\n%-8lf\n%-6lf\n%-6lf\n%-2s\n", atoms[j].atm, atoms[j].atnum, atoms[j].name, atoms[j].res, atoms[j].chain, atoms[j].resnum, atoms[j].x, atoms[j].y, atoms[j].z, atoms[j].occ, atoms[j].bfac, atoms[j].elem);
+				printf("\nNot all data read from line %d\nSTOP\nfcheck=%d\n", k, fcheck);
+				printf("\n%s\n", dump);
+				exit(0);
+			}
+
+			j++
+		}
 		else{fgets(dump,99,fp);}//move to next line
-		j++;
+		k++;
     }while(buff!= NULL);
 
     printf("\n%d Atoms read\n",i);
