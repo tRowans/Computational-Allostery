@@ -282,7 +282,6 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
         io = HandOfGod(atoms,N,het,xyzo,indexs,&seed);
         write_pdb("h2.pdb",G,N,atoms);
         pa = aprob(G0,G[4],T,co,&seed);//check for acceptance
-		printf("\npa = %d\n", pa);
 
         if(pa!=0)
         {

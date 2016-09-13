@@ -24,9 +24,10 @@ int aprob(double G0,double G1,double T,int i,int *seed)
     {
         x = urand(seed,0,1);
         ret = floor(x/eg);//ret=1 if x>eg 0 otherwise
-
-		printf("x = %5lf | eg = %5lf | ret = %d", x, eg, ret);
     }
+
+	if (ret != 0) { ret = 1; }
+
     return ret;
 }
 
