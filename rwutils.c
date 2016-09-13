@@ -132,7 +132,7 @@ void read_pdb(FILE* fp,node *atoms)
 	
             i++;
         }
-		if (ainb("ATOM", lign) == 0)
+		else if (ainb("ATOM", lign) == 0)
 		{
 			fsetpos(fp, &position);
 			fcheck = fscanf(fp, "%6s%4d%4s %3s %1s %4d %8lf %8lf %8lf %6lf %6lf %2s \n", atoms[j].atm, &atoms[j].atnum, atoms[j].name, atoms[j].res, atoms[j].chain, &atoms[j].resnum, &atoms[j].x, &atoms[j].y, &atoms[j].z, &atoms[j].occ, &atoms[j].bfac, atoms[j].elem);
