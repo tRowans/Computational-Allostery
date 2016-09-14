@@ -150,7 +150,7 @@ void read_pdb(FILE* fp,node *atoms)
 		k++;
     }while(buff!= NULL);
 
-    printf("\n%d Atoms read\n",i+j);
+    printf("\n%d Atoms read\n",i+j-2);
 	fflush(stdout);
 }
 
