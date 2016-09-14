@@ -120,6 +120,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 
 		//Move atom
         if(i==1){
+			printf("Moving atom\n");
             ratmpos(rn,an,atoms,seed);  //Normal atoms move relative to other atoms
 
 			if (num != -1)
@@ -134,6 +135,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 			
         }
         else if(i==0){
+			printf("Moving Ligand\n");
             ratmpos(rn,rn,atoms,seed);  //Ligands move relative to themselves
 			
 			if (num != -1)
@@ -150,6 +152,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 
         if(spache(atoms,rn,N)==1)//test physical space (x,y,z) unoccupied
         {
+			printf("Failed Spache\n");
             cont = 0;
 			con++;
             atoms[rn].x = xyzo[0];
@@ -174,6 +177,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 
 		if(rn != 2 && rn != N - 1 && coin < 0.5)  //Check not disconnected from rn + 1
 		{
+			printf("Failed disc check 1\n");
 			sep[0] = atoms[rn].x - atoms[rn + 1].x;
 			sep[1] = atoms[rn].y - atoms[rn + 1].y;
 			sep[2] = atoms[rn].z - atoms[rn + 1].z;
@@ -204,6 +208,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 
 		if(rn != 2 && rn != N - 1 && coin >= 0.5)  //Check not disconnected from rn - 1
 		{
+			printf("Failed disc check 2\n");
 			sep[0] = atoms[rn].x - atoms[rn - 1].x;
 			sep[1] = atoms[rn].y - atoms[rn - 1].y;
 			sep[2] = atoms[rn].z - atoms[rn - 1].z;
