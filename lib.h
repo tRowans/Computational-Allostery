@@ -116,7 +116,7 @@ int aprob(double G0,double G1,double T,int i,int *seed);
 double Temp(char filename[99]);
 
 //moves
-int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed);
+int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, int num);
 //----------------------
 
 //avo
@@ -131,6 +131,7 @@ double m_centre(node *atoms,int N);
 int lig_id(ep *p);
 int count_connections(ep *p);
 int lig_com(ep *p);
+int count_diff(int N, node *atoms, char *path);
 
 void dsytrd3(double A[3][3], double Q[3][3], double d[3], double e[2]);
 int dsyevq3(double A[3][3], double Q[3][3], double w[3]);

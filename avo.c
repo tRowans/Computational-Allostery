@@ -176,7 +176,7 @@ void samples(char acc[],int n,int N,double sdist,int het)
 
     while(d<n)
     {
-        k=HandOfGod(atoms,N,het,xyzo,indexs,&seed);
+        k=HandOfGod(atoms,N,het,xyzo,indexs,&seed,-1);
         if(k>N){exit(0);}
         sprintf(patha,"%s%d.pdb",pathb,d);
         write_pdb(patha,G,N,atoms);
@@ -279,9 +279,35 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 
     while(T>fabs(Gmax*5e-4))
     {
-        io = HandOfGod(atoms,N,het,xyzo,indexs,&seed);
+		sprintf(pathc, "runs/%d.pdb", j - 1);
+
+		//MOVING NODE
+        io = HandOfGod(atoms,N,het,xyzo,indexs,&seed, j-1); //REMOVE NUM AFTER
+
+		if (count_diff(N, atoms, pathc) > 1)
+		{
+			printf("\nMultiple nodes moved during moving..........\n");
+			printf("Terminating..........\n");
+			exit(0);
+		}
+		//WRITING TO PDB
         write_pdb("h2.pdb",G,N,atoms);
+
+		if (count_diff(N, atoms, pathc) > 1)
+		{
+			printf("\nMultiple nodes moved during writing..........\n");
+			printf("Terminating..........\n");
+			exit(0);
+		}
+		//TESTING ACCEPTANCE
         pa = aprob(G0,G[4],T,co,&seed);//check for acceptance
+
+		if (count_diff(N, atoms, pathc) > 1)
+		{
+			printf("\nMultiple nodes moved during testing..........\n");
+			printf("Terminating..........\n");
+			exit(0);
+		}
 
         if(pa!=0)
         {
@@ -290,6 +316,13 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
             atoms[io].z = xyzo[2];
             if(count>50){printf("\nTerminated after %d unsuccessful move attempts\n",count);break;}
             count++;
+
+			if (count_diff(N, atoms, pathc) > 1)
+			{
+				printf("\nMultiple nodes moved during node return..........\n");
+				printf("Terminating..........\n");
+				exit(0);
+			}
         }
         else
         {

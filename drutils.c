@@ -134,6 +134,27 @@ int count_connections(ep *p)
 }
 
 
+int count_diff(int N, node *atoms, char *path)
+//Compares current state of *atoms to previously saved version and determines the number of atoms in different positions
+//Returns this number
+{
+	node *old;
+	int i=0, j=0;
+	FILE *fp;
+
+	old = calloc(N, sizeof(node));
+
+	fp = fopen(path, "r");
+	read_pdb(fp, old);
+	for (i = 0; i < N; i++)
+	{
+		if (atoms[i].x != old[i].x || atoms[i].y != old[i].y || atoms[i].z != old[i].z) { j++; }
+	}
+
+	fclose(fp);
+	return(j);
+}
+
 //Diagonalization routine courtesy of:
 /*Joachim Kopp
 Numerical diagonalization of hermitian 3x3 matrices
