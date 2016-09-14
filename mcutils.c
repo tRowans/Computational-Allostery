@@ -84,6 +84,7 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
     double coin;
 	double sep[3];
     rn=floor(urand(seed,0,N));
+	printf("\nNode %d selected\n", rn);
     while(/*con<=(1e5) &&*/cont==0)
     {
         if((con/50)>=1){

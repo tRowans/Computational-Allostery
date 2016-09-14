@@ -148,7 +148,11 @@ int count_diff(int N, node *atoms, char *path)
 	read_pdb(fp, old);
 	for (i = 0; i < N; i++)
 	{
-		if (atoms[i].x != old[i].x || atoms[i].y != old[i].y || atoms[i].z != old[i].z) { j++; }
+		if (atoms[i].x != old[i].x || atoms[i].y != old[i].y || atoms[i].z != old[i].z)
+		{
+			printf("\nNode %d is different\n", i);
+			j++;
+		}
 	}
 
 	fclose(fp);
