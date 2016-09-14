@@ -158,6 +158,7 @@ int count_diff(int N, node *atoms, char *path)
 	}
 
 	fclose(fp);
+	free(old);
 	return(j);
 }
 

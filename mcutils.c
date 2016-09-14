@@ -78,13 +78,43 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 	char path[20];
 	sprintf(path, "runs/%d.pdb", num);
 
-    int cont=0,con=0;
+    int cont=0,con=0,found=0;
     int rn, an;
     int i=1,hetc=0,j;
     double coin;
 	double sep[3];
-    rn=floor(urand(seed,0,N));
+
+	while (found = 0)
+	{
+		rn = floor(urand(seed, 0, N));
+		i = ainb("HETATM", atoms[rn].atm);
+		if (i == 0 && het == 0) { continue; }//if fixed ligands and ligand selected for move
+		found = 1;
+	}
 	printf("\nNode %d selected\n", rn);
+	xyzo[0] = atoms[rn].x;
+	xyzo[1] = atoms[rn].y;
+	xyzo[2] = atoms[rn].z;
+																		//Choosing which atom to move relative to
+	if (rn == 2) { an = 3; }  //First atom in chain is only connected to one atom
+	else if (rn == N - 1) { an = N - 2; }  //Last atom in chain is only connected to one atom
+	else //Other atoms can move relative to either. Choose one at random
+	{
+		coin = urand(seed, 0, 1);
+		if (coin < 0.5) { an = rn - 1; }
+		else { an = rn + 1; }
+	}
+
+	if (num != -1)
+	{
+		if (count_diff(N, atoms, path) > 1)
+		{
+			printf("\nMultiple nodes moved in init..........\n");
+			printf("Terminating..........\n");
+			exit(0);
+		}
+	}
+
     while(/*con<=(1e5) &&*/cont==0)
     {
         if((con/50)>=1){
@@ -92,31 +122,6 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 			rn = floor(urand(seed,0,N));
 		}
         hetc = 0;
-        xyzo[0] = atoms[rn].x;
-        xyzo[1] = atoms[rn].y;
-        xyzo[2] = atoms[rn].z;
-        i = ainb("HETATM",atoms[rn].atm);
-        if(i==0 && het==0){rn = floor(urand(seed,0,N)); continue;}//if fixed ligands and ligand selected for move
-		//Choosing which atom to move relative to
-		if (rn == 2) { an = 3; }  //First atom in chain is only connected to one atom
-		else if (rn == N - 1) { an = N - 2; }  //Last atom in chain is only connected to one atom
-		else //Other atoms can move relative to either. Choose one at random
-
-		if(num != -1)
-		{
-			if (count_diff(N, atoms, path) > 1)
-			{
-				printf("\nMultiple nodes moved in init..........\n");
-				printf("Terminating..........\n");
-				exit(0);
-			}
-		}
-
-		{
-			coin = urand(seed, 0, 1);
-			if (coin < 0.5) { an = rn - 1; }
-			else { an = rn + 1; }
-		}
 
 		//Move atom
         if(i==1){
@@ -161,7 +166,6 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
             printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
 			printf("\ntrying cyc %d\n", con);
 			fflush(stdout);
-            continue;
 
 			if (num != -1)
 			{
@@ -173,16 +177,17 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 				}
 			}
 			
+			continue;
         }
 
 		if(rn != 2 && rn != N - 1 && coin < 0.5)  //Check not disconnected from rn + 1
 		{
-			printf("Failed disc check 1\n");
 			sep[0] = atoms[rn].x - atoms[rn + 1].x;
 			sep[1] = atoms[rn].y - atoms[rn + 1].y;
 			sep[2] = atoms[rn].z - atoms[rn + 1].z;
-			if(rad(sep[0], sep[1], sep[2]) >= M_CUT) 
+			if(rad(sep[0], sep[1], sep[2]) >= M_CUT)
 			{
+				printf("Failed disc check 1\n");
 				cont = 0;
 				con++;
 				atoms[rn].x = xyzo[0];
@@ -190,30 +195,29 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 				atoms[rn].z = xyzo[2];
 				printf("\ntrying cyc %d\n", con);
 				fflush(stdout);
-				rn = floor(urand(seed, 0, N));
-				continue;
-			}
 
-			if (num != -1)
-			{
-				if (count_diff(N, atoms, path) > 1)
+				if (num != -1)
 				{
-					printf("\nMultiple nodes moved during chain check 1..........\n");
-					printf("Terminating..........\n");
-					exit(0);
+					if (count_diff(N, atoms, path) > 1)
+					{
+						printf("\nMultiple nodes moved during chain check 1..........\n");
+						printf("Terminating..........\n");
+						exit(0);
+					}
 				}
-			}
-			
+
+				continue;
+			}			
 		}
 
-		if(rn != 2 && rn != N - 1 && coin >= 0.5)  //Check not disconnected from rn - 1
+		else if(rn != 2 && rn != N - 1 && coin >= 0.5)  //Check not disconnected from rn - 1
 		{
-			printf("Failed disc check 2\n");
 			sep[0] = atoms[rn].x - atoms[rn - 1].x;
 			sep[1] = atoms[rn].y - atoms[rn - 1].y;
 			sep[2] = atoms[rn].z - atoms[rn - 1].z;
 			if(rad(sep[0], sep[1], sep[2]) >= M_CUT)
 			{
+				printf("Failed disc check 2\n");
 				cont = 0;
 				con++;
 				atoms[rn].x = xyzo[0];
@@ -221,26 +225,23 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 				atoms[rn].z = xyzo[2];
 				printf("\ntrying cyc %d\n", con);
 				fflush(stdout);
-				rn = floor(urand(seed, 0, N));
-				continue;
-			}
 
-			if (num != -1)
-			{
-				if (count_diff(N, atoms, path) > 1)
+				if (num != -1)
 				{
-					printf("\nMultiple nodes moved during chain check 2..........\n");
-					printf("Terminating..........\n");
-					exit(0);
+					if (count_diff(N, atoms, path) > 1)
+					{
+						printf("\nMultiple nodes moved during chain check 2..........\n");
+						printf("Terminating..........\n");
+						exit(0);
+					}
 				}
-			}
-			
+
+				continue;
+			}			
 		}
 
-        else{
-            printf("\nmove found %d\n",con);
-			cont = 1;
-        }
+        printf("\nmove found %d\n",con);
+		cont = 1;
     }
     if(cont==0){printf("\nNo move found\n");return con;}
 	fflush(stdout);
