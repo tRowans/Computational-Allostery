@@ -142,6 +142,8 @@ int count_diff(int N, node *atoms, char *path)
 	int i=0, j=0;
 	FILE *fp;
 
+	printf("\nReading from %s\n", path);
+
 	old = calloc(N, sizeof(node));
 
 	fp = fopen(path, "r");

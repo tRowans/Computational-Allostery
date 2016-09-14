@@ -279,8 +279,6 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 
     while(T>fabs(Gmax*5e-4))
     {
-		sprintf(pathc, "runs/%d.pdb", j - 1);
-
 		//MOVING NODE
         io = HandOfGod(atoms,N,het,xyzo,indexs,&seed, j-1); //REMOVE NUM AFTER
 
