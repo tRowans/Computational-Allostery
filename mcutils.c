@@ -69,114 +69,83 @@ double Temp(char filename[])
 
 //Moves//
 
-int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, int num)
+int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed)
 //N is number of nodes, calculates montecarlo move.
 //het is 0 if fixed ligand site distance & 1 for variable
 //moves a random node
 {
     //if(con>2.5e4){return con;}
-	char path[20];
-	sprintf(path, "runs/%d.pdb", num);
-
-    int cont=0,con=0,found=0;
+	
+    int cont=0,found=0;
     int rn, an;
     int i=1,hetc=0,j;
-    double coin;
+    double coin, con=0.0;
 	double sep[3];
 
-	while (found = 0)
+	while (found == 0)
 	{
 		rn = floor(urand(seed, 0, N));
 		i = ainb("HETATM", atoms[rn].atm);
-		if (i == 0 && het == 0) { continue; }//if fixed ligands and ligand selected for move
+		if (i == 0 && het == 0) { continue; }		//if fixed ligands and ligand selected for move
 		found = 1;
 	}
 	printf("\nNode %d selected\n", rn);
+	fflush(stdout);
 	xyzo[0] = atoms[rn].x;
 	xyzo[1] = atoms[rn].y;
 	xyzo[2] = atoms[rn].z;
-																		//Choosing which atom to move relative to
-	if (rn == 2) { an = 3; }  //First atom in chain is only connected to one atom
-	else if (rn == N - 1) { an = N - 2; }  //Last atom in chain is only connected to one atom
-	else //Other atoms can move relative to either. Choose one at random
+	
+	//Choosing which atom to move relative to
+	if (rn == 2) { an = 3; }						//First atom in chain is only connected to one atom
+	else if (rn == N - 1) { an = N - 2; }			//Last atom in chain is only connected to one atom
+	else											//Other atoms can move relative to either. Choose one at random
 	{
 		coin = urand(seed, 0, 1);
 		if (coin < 0.5) { an = rn - 1; }
 		else { an = rn + 1; }
 	}
 
-	if (num != -1)
-	{
-		if (count_diff(N, atoms, path) > 1)
-		{
-			printf("\nMultiple nodes moved in init..........\n");
-			printf("Terminating..........\n");
-			exit(0);
-		}
-	}
-
-    while(/*con<=(1e5) &&*/cont==0)
+    while(con<=(1e5) && cont==0)
     {
-        if((con/50)>=1){
-			con=0;
+        if(floor(con/50) == con/50)										//Rechoose atom after 50 failed attempts
+		{
 			rn = floor(urand(seed,0,N));
+
+			xyzo[0] = atoms[rn].x;
+			xyzo[1] = atoms[rn].y;
+			xyzo[2] = atoms[rn].z;
+
+			//Choosing which atom to move relative to
+			if (rn == 2) { an = 3; }						//First atom in chain is only connected to one atom
+			else if (rn == N - 1) { an = N - 2; }			//Last atom in chain is only connected to one atom
+			else											//Other atoms can move relative to either. Choose one at random
+			{
+				coin = urand(seed, 0, 1);
+				if (coin < 0.5) { an = rn - 1; }
+				else { an = rn + 1; }
+			}
 		}
         hetc = 0;
 
 		//Move atom
         if(i==1){
-			printf("Moving atom\n");
-            ratmpos(rn,an,atoms,seed);  //Normal atoms move relative to other atoms
-
-			if (num != -1)
-			{
-				if (count_diff(N, atoms, path) > 1)
-				{
-					printf("\nMultiple nodes moved during atom move..........\n");
-					printf("Terminating..........\n");
-					exit(0);
-				}
-			}
-			
+            ratmpos(rn,an,atoms,seed);  //Normal atoms move relative to other atoms			
         }
+
         else if(i==0){
-			printf("Moving Ligand\n");
             ratmpos(rn,rn,atoms,seed);  //Ligands move relative to themselves
-			
-			if (num != -1)
-			{
-				if (count_diff(N, atoms, path) > 1)
-				{
-					printf("\nMultiple nodes moved during ligand move..........\n");
-					printf("Terminating..........\n");
-					exit(0);
-				}
-			}
-			
         }
 
         if(spache(atoms,rn,N)==1)//test physical space (x,y,z) unoccupied
         {
-			printf("Failed Spache\n");
             cont = 0;
 			con++;
             atoms[rn].x = xyzo[0];
 			atoms[rn].y = xyzo[1];
 			atoms[rn].z = xyzo[2];
             printf("initial | x= %5.2lf | y= %5.2lf | z= %5.2lf\n",atoms[rn].x,atoms[rn].y,atoms[rn].z);
-			printf("\ntrying cyc %d\n", con);
-			fflush(stdout);
-
-			if (num != -1)
-			{
-				if (count_diff(N, atoms, path) > 1)
-				{
-					printf("\nMultiple nodes moved during spache..........\n");
-					printf("Terminating..........\n");
-					exit(0);
-				}
-			}
-			
+			printf("\ntrying cyc %lf\n", con);
+			fflush(stdout);			
 			continue;
         }
 
@@ -193,19 +162,8 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 				atoms[rn].x = xyzo[0];
 				atoms[rn].y = xyzo[1];
 				atoms[rn].z = xyzo[2];
-				printf("\ntrying cyc %d\n", con);
+				printf("\ntrying cyc %lf\n", con);
 				fflush(stdout);
-
-				if (num != -1)
-				{
-					if (count_diff(N, atoms, path) > 1)
-					{
-						printf("\nMultiple nodes moved during chain check 1..........\n");
-						printf("Terminating..........\n");
-						exit(0);
-					}
-				}
-
 				continue;
 			}			
 		}
@@ -223,27 +181,16 @@ int HandOfGod(node *atoms,int N,int het,double xyzo[3],int **indexs,int *seed, i
 				atoms[rn].x = xyzo[0];
 				atoms[rn].y = xyzo[1];
 				atoms[rn].z = xyzo[2];
-				printf("\ntrying cyc %d\n", con);
+				printf("\ntrying cyc %lf\n", con);
 				fflush(stdout);
-
-				if (num != -1)
-				{
-					if (count_diff(N, atoms, path) > 1)
-					{
-						printf("\nMultiple nodes moved during chain check 2..........\n");
-						printf("Terminating..........\n");
-						exit(0);
-					}
-				}
-
 				continue;
 			}			
 		}
 
-        printf("\nmove found %d\n",con);
+        printf("\nmove found %lf\n",con);
 		cont = 1;
     }
-    if(cont==0){printf("\nNo move found\n");return con;}
+	if (cont == 0) { printf("\nNo move found\n"); }
 	fflush(stdout);
     return rn;
 }

@@ -134,20 +134,12 @@ int count_connections(ep *p)
 }
 
 
-int count_diff(int N, node *atoms, char *path)
+int count_diff(int N, node *atoms, node *old)
 //Compares current state of *atoms to previously saved version and determines the number of atoms in different positions
 //Returns this number
 {
-	node *old;
 	int i=0, j=0;
-	FILE *fp;
 
-	printf("\nReading from %s\n", path);
-
-	old = calloc(N, sizeof(node));
-
-	fp = fopen(path, "r");
-	read_pdb(fp, old);
 	for (i = 0; i < N; i++)
 	{
 		if (atoms[i].x != old[i].x || atoms[i].y != old[i].y || atoms[i].z != old[i].z)
@@ -157,8 +149,6 @@ int count_diff(int N, node *atoms, char *path)
 		}
 	}
 
-	fclose(fp);
-	free(old);
 	return(j);
 }
 
