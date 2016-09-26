@@ -40,7 +40,7 @@ void ratmpos(int i,int j,node *atoms,int *seed)
 //generate random atom position
 {
     int u=1,k=0;
-    
+
     double rdist;
     double theta,phi;
 	//printf("j = %d, rad = %5.3g\n",j,rdist);
@@ -67,7 +67,7 @@ void gen_data(node *atoms,int i,int *seed)
 //generates data for the new atom
 {
     //getres(atoms[i].res);
-    
+
     atoms[i].bfac = rbfac(seed);
     atoms[i].atnum = atoms[i-1].atnum + 1;
     atoms[i].resnum = atoms[i-1].resnum + 1;
@@ -83,7 +83,7 @@ void gen_data(node *atoms,int i,int *seed)
     strncpy(atoms[i].name,"CA",2);
     strncpy(atoms[i].chain,"A",1);
     strncpy(atoms[i].elem,"C",1);
-	
+
 
 }
 
@@ -130,37 +130,46 @@ int spache(node *atoms, int i,int N)
     return bools;
 }
 
-void connections(int **indexs,int N,node *atoms)
+double connections(int **indexs,double **lens,int N,node *atoms)
 //stores their indices of connected nodes in index
 //no connections to ligand sites recorded
-//assumes ligands at end
+//assumes ligands have indices 0 and 1
 {
     int i=0,count,a=0;
     int size,j=0;
-    double dist;
+    double dist,sum_dist,mx_dist=0,mi_dist=0,av_dist;
     for(a=0;a<N;a++)
     {
         count = 1;
-        //if(ainb("HETATM",atm[a])==0){continue;}//stops connection to ligands
-        //printf("\n%i\t",a);
-        indexs[a] = realloc(indexs[a],N*sizeof(int));
-        for(i=0;i<N;i++)
+        sum_dist = 0;
+        if(ainb("HETATM",atoms[a].atm)==0){continue;} //stops connection to ligands
+        for(i=2;i<N;i++)
         {
-
-            //if(i==a || ainb("HETATM",atm[a])==0){continue;}//stops connection to self or ligands
-            if(i==a){continue;}
-            dist = SQR(atoms[i].x - atoms[a].x) + SQR(atoms[i].y - atoms[a].y) + SQR(atoms[i].z - atoms[a].z);
-            if(sqrt(dist)<M_CUT)
+            if(i==a){continue;} //stops connection to self
+            dist = rad(atoms[i].x - atoms[a].x, atoms[i].y - atoms[a].y, atoms[i].z - atoms[a].z);
+            if(dist<M_CUT)
             {
-                indexs[a][count]=i;
-                //printf("%i\t",indexs[a][count]);
+                indexs[a-2][count]=i; //stores index of connected atom
+
+                lens[a-2][count]=dist; //stores length of bond
+                sum_dist+=dist;
+                if(dist>mx_dist){mx_dist=dist;} //max recorded bond length
+                if(dist<mi_dist){mi_dist=dist;} //min recorded bond length
                 count++;
             }
         }
-        indexs[a][0]=count;
-		indexs[a] = realloc(indexs[a],(count)*sizeof(int));
-        //printf("count= %d\n",count);
+        indexs[a-2][0]=count; //number of connected atoms
+		indexs[a-2] = realloc(indexs[a-2],(count)*sizeof(int));
+		lens[a-2][0]=sum_dist/(count-1); //average bond length for that atoms
+        lens[a-2] = realloc(lens[a-2], (count)*sizeof(double));
     }
+    for(j=0;j<N-2;j++)
+    {
+        av_dist+=lens[j][0];
+    }
+    av_dist = av_dist/(N-2); //average total bond length
+
+    return av_dist,mx_dist,mi_dist;
 }
 
 int cycle(int **index,int N,node *atoms)
@@ -261,7 +270,7 @@ int ep_alloc(ep *p,int n)
 
 int ep_free(ep *p,int n)
 {
-	if(p->atoms != NULL){	
+	if(p->atoms != NULL){
 		free(p->atoms);
 	}
 	return 0;

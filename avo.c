@@ -17,7 +17,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 //Generates a model protein formed from N nodes joined by a backbone.
 //Ligands are generated at a distance specified by sdist.
 //Non-ligand nodes are generated with each node connected to the previous one.
-//A .pdb of the structure is saved to dir[]. Runs is a .txt file for storing free energies. 
+//A .pdb of the structure is saved to dir[]. Runs is a .txt file for storing free energies.
 //G[5] holds free energies G0, G11, G12, G2 and DDG, *atoms stores position data etc. and **indexs stores connections.
 {
 	printf("\n----------------------\nGenerating Seed Structure\n");
@@ -98,8 +98,6 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 
 	fflush(stdout);
 
-	connections(indexs, N, atoms);
-
 	fopen("res.force", "r");  //Opens for reading
 
 	write_pdb(fname, G, N, atoms);
@@ -114,7 +112,7 @@ void make_seed_b(FILE *runs, FILE *bonds, char dir[], int N, double sdist, doubl
 void samples(char acc[],int n,int N,double sdist,int het)
 {
     double xyzo[3],G0,G[5];
-    int d=1,k,i=0,pa;
+    int d=1,k,l,i=0,pa;
     char patha[60],pathb[99],pathc[99];
     time_t t0,t1;
     int d_t,tip=420;
@@ -141,14 +139,15 @@ void samples(char acc[],int n,int N,double sdist,int het)
 		printf("\nCould not create ffile\nSTOP");
 		exit(0);
 	}
-	
+
     t0=time(NULL);
 
 
     int **indexs;
+    double **lens;
 
     //make dynamic arrays
-    indexs=malloc(N * sizeof(int*));
+    indexs=malloc(N-2 * sizeof(int*));
     node *atoms;
     atoms=calloc(N,sizeof(node));
     if(atoms==NULL || indexs==NULL)
@@ -157,10 +156,21 @@ void samples(char acc[],int n,int N,double sdist,int het)
         exit(0);
     }
 
-    for(k=0;k<N;k++)
+    for(k=0;k<N-2;k++)
     {
-        indexs[k]=malloc((N+1)*sizeof(int));
+        indexs[k]=malloc((N-2)*sizeof(int));
         if(indexs[k]==NULL)
+        {
+            printf("\nMemory could not be allocated for line data arrays\nSTOP");
+            exit(0);
+        }
+    }
+
+    lens = malloc(N * sizeof(double*));
+    for(l=0;l<N-2;l++)
+    {
+        lens[l]=malloc((N-2)*sizeof(double));
+        if(lens[l]==NULL)
         {
             printf("\nMemory could not be allocated for line data arrays\nSTOP");
             exit(0);
@@ -205,8 +215,8 @@ void samples(char acc[],int n,int N,double sdist,int het)
 int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 {
     double T,cool=0.95,sig,cdist,dist,msqrt;
-    double xyzo[3],G0,G[5],Nm[3],Gmax,cdistbest;
-    int d=1,io=0,k,j=1,pa,count=0,i=0,best;
+    double xyzo[3],G0,G[5],Nm[3],Gmax,cdistbest,bondstat[3];
+    int d=1,io=0,k,j=1,pa,count=0,i=0,l=0,best;
 	char patha[60], pathb[60], pathc[60], acc[20] = "runs";
     time_t t0,t1;
     int d_t,tip=420;
@@ -234,9 +244,10 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
     t0=time(NULL);
 
     int **indexs;
+    double **lens;
 
     //make dynamic arrays
-    indexs = malloc(N * sizeof(*indexs));
+    indexs = malloc(N-2 * sizeof(*indexs));
 
     //if(x==NULL || y==NULL || z==NULL  || occ==NULL || bfac==NULL || atnum==NULL ||  resnum==NULL ||  atm==NULL ||  name==NULL ||  res==NULL ||  elem==NULL ||  chain==NULL || indexs==NULL)
     if(indexs==NULL)
@@ -245,11 +256,21 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
         exit(0);
     }
 
-    for(k=0;k<N;k++)
+    for(k=0;k<N-2;k++)
     {
-        indexs[k] = malloc((N+1) * sizeof(*indexs[k]));
-        //if(atm[k]==NULL || name[k]==NULL || res[k]==NULL  || elem[k]==NULL  || chain[k]==NULL || indexs[k]==NULL)
+        indexs[k] = malloc((N-2) * sizeof(*indexs[k]));
         if(indexs[k]==NULL)
+        {
+            printf("\nMemory could not be allocated for line data arrays\nSTOP");
+            exit(0);
+        }
+    }
+
+    lens = malloc(N-2 * sizeof(double*));
+    for(l=0;l<N-2;l++)
+    {
+        lens[l]=malloc((N-2)*sizeof(double));
+        if(lens[l]==NULL)
         {
             printf("\nMemory could not be allocated for line data arrays\nSTOP");
             exit(0);
@@ -273,8 +294,6 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
 	spdb = fopen("runs/0.pdb", "r");
 	read_pdb(spdb, atoms);  //Reading data from seed pdb and storing in atoms struct
 	fclose(spdb);
-
-    connections(indexs,N,atoms);
 
     while(T>fabs(Gmax*5e-4))
     {
@@ -322,6 +341,10 @@ int monte(int N,double sdist,int het,int co,int *iters,char sdir[])
         }
     }
 
+    bondstat[0],bondstat[1],bondstat[2]=connections(indexs,lens,N,atoms);
+    printf("\nAverage bond length is %lf\n",bondstat[0]);
+    printf("Maximum bond length is %lf\n",bondstat[1]);
+    printf("Minimum bond length is %lf\n",bondstat[2]);
 
     printf("\n-------------------------------------------\nRun Complete\n");
     fclose(runsa);

@@ -84,7 +84,7 @@ int lig_com(ep *p)
     p->lig_ax[0]*=1/r;
     p->lig_ax[1]*=1/r;
     p->lig_ax[2]*=1/r;*/
-	
+
     return 0;
 }
 
@@ -105,7 +105,7 @@ int lig_id(ep *p)
     return 0;
 }
 
-int count_connections(ep *p)
+/*int count_connections(ep *p)
 {
     int **indi;
     indi=malloc(p->N *sizeof(*indi));
@@ -131,7 +131,7 @@ int count_connections(ep *p)
     for(int i=0;i<p->N;i++){free(indi[i]);}
     free(indi);
     return 0;
-}
+}*/
 
 
 int count_diff(int N, node *atoms, node *old)

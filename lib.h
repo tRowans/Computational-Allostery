@@ -35,7 +35,7 @@ typedef struct
     double z;
     double occ;
     double bfac;
-    
+
 }node;//holds node data
 
 typedef struct
@@ -100,7 +100,7 @@ double rbfac(int *seed);
 void gen_data(node *atoms,int i,int *seed);
 
 int spache(node *atoms, int i,int N);
-void connections(int **indexs,int N,node *atoms);
+double connections(int **indexs,double **lens,int N,node *atoms);
 int cycle(int **indexs,int N,node *atoms);
 
 int ep_alloc(ep *p,int n);
